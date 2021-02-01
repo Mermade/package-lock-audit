@@ -1,0 +1,34 @@
+{
+  "name": "package-lock-audit",
+  "version": "1.0.0",
+  "description": "Audit npm package-lock.json for security issues",
+  "main": "index.js",
+  "bin": {
+    "package-lock-audit": "package-lock-audit.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "audit",
+    "security",
+    "lint",
+    "ci",
+    "package-lock.json"
+  ],
+  "author": "Mike Ralphson",
+  "license": "MIT",
+  "dependencies": {
+    "reftools": "^1.1.8",
+    "tiny-opts-parser": "0.0.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mermade/package-lock-audit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mermade/package-lock-audit/issues"
+  },
+  "homepage": "https://github.com/Mermade/package-lock-audit#readme"
+}
