@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+
+'use strict';
+
 const fs = require('fs');
 const argv = require('tiny-opts-parser')(process.argv);
 const audit = require('./index.js').audit;
