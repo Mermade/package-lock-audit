@@ -1,5 +1,7 @@
 # package-lock-audit
 
+![CI](https://github.com/Mermade/package-lock-audit/workflows/CI/badge.svg)
+
 A simple audit/lint/security tool for checking `npm` `package-lock.json` files against the following security issues:
 
 * Missing `integrity` properties
