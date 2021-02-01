@@ -1,6 +1,6 @@
 {
   "name": "package-lock-audit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Audit npm package-lock.json for security issues",
   "main": "index.js",
   "bin": {
