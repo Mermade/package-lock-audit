@@ -7,11 +7,13 @@ const argv = require('tiny-opts-parser')(process.argv);
 const audit = require('./index.js').audit;
 
 const failures = [];
+let count = 0;
 
 for (let i=2;i<argv._.length;i++) {
   console.log(argv._[i],'...');
   const obj = JSON.parse(fs.readFileSync(argv._[i],'utf8'));
   try {
+    count++;
     audit(obj,argv);
   }
   catch (ex) {
@@ -21,8 +23,8 @@ for (let i=2;i<argv._.length;i++) {
   }
 }
 
-if (failures.length > 1) {
-  console.warn();
+if ((failures.length > 1) || (failures.length && count > 1)) {
+  console.warn('\nFailures:');
   for (let failure of failures) {
     console.warn(failure);
   }
