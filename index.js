@@ -12,7 +12,7 @@ function audit(obj,argv) {
         let package = d.split('/').pop();
         dep = obj.dependencies[d]; 
         if (argv.verbose) console.log('  Dependency',d,dep.version);
-        assert.ok(dep.integrity,'Expected an integrity string');
+        assert.ok(dep.integrity,`Expected an integrity string: ${d}:${dep.version}`);
         if (argv.fix) {
           dep.resolved = dep.resolved.replace('http:','https:');
         }
