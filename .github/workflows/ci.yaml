@@ -23,4 +23,5 @@ jobs:
 
     - run: npm i
     - run: node ./package-lock-audit.js ./package-lock.json
+    - run: npx eslint *.js
 

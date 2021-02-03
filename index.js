@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const recurse = require('reftools/lib/recurse.js').recurse;
 
@@ -9,18 +11,18 @@ function audit(obj,argv) {
   recurse(obj,{},function(obj,key,state){
     if (key === 'dependencies' && typeof obj[key] === 'object') {
       for (let d in obj.dependencies) {
-        let package = d.split('/').pop();
-        dep = obj.dependencies[d]; 
+        const depPackage = d.split('/').pop();
+        dep = obj.dependencies[d];
         if (argv.verbose) console.log('  Dependency',d,dep.version);
         assert.ok(dep.integrity,`Expected an integrity string: ${d}:${dep.version}`);
         if (argv.fix) {
           dep.resolved = dep.resolved.replace('http:','https:');
         }
-        const compare = `https://registry.npmjs.org/${d}/-/${package}-${dep.version}.tgz`;
+        const compare = `https://registry.npmjs.org/${d}/-/${depPackage}-${dep.version}.tgz`;
         assert.equal(dep.resolved,compare);
       }
     }
-  }); 
+  });
   return true;
 }
 
