@@ -42,4 +42,4 @@ catch (ex) {
 
 ## Out of Scope
 
-* Support for `yarn` / `pnpm` / `tink` etc - see https://github.com/lirantal/lockfile-lint
+* Support for `yarn` / `pnpm` / `tink` / `entropic` etc - see https://github.com/lirantal/lockfile-lint/issues
