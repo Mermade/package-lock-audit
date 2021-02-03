@@ -14,7 +14,7 @@ It returns a non-zero exit code in the event of errors, so is suitable for use i
 
 ## Usage
 
-* `npx package-lock-audit [...package-lock.json]`
+* `npx package-lock-audit [--verbose 1] [...package-lock.json]`
 
 or
 
@@ -36,8 +36,9 @@ catch (ex) {
 
 * Optionally support other repository URL patterns
 * Optionally support `git://` protocol / GitHub dependencies
-* Support `lockfileVersion` 2
+* Support [`lockfileVersion` 2](https://gitlab.com/gitlab-org/gitlab/-/issues/273651)
+* Finish `--fix` feature for trivial fixes like `http://` => `https://`
 
 ## Out of Scope
 
-* Support for `yarn` - see https://github.com/lirantal/lockfile-lint
+* Support for `yarn` / `pnpm` / `tink` etc - see https://github.com/lirantal/lockfile-lint
