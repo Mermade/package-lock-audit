@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const argv = require('tiny-opts-parser')(process.argv);
-const audit = require('./index.js').audit;
+const { audit } = require('./index.js');
 
 const failures = [];
 let count = 0;

@@ -9,6 +9,7 @@ A simple audit/lint/security tool for checking `npm` `package-lock.json` files a
 * `resolved` URLs pointing at non-`npmjs.org` repositories
 * Mismatches between dependency version and `resolved` URL version
 * Mismatches between dependency package names and `resolved` URL names
+* Erroneously installed packages which match a built-in module name
 
 It returns a non-zero exit code in the event of errors, so is suitable for use in a CI pipeline.
 
@@ -16,12 +17,12 @@ It returns a non-zero exit code in the event of errors, so is suitable for use i
 
 * `npx package-lock-audit [--verbose 1] [...package-lock.json]`
 
-**Note**: it is safest to use `npx` to call this binary, and to do it **before** you do `npm i` for your project. There is no need to add it to your `dev-dependencies` unless you want to.
+**Note**: it is safest to use `npx` to call this binary, and to do it **before** you do `npm i` for your project. There is no need to add it to your `devDependencies` unless you want to.
 
 or
 
 ```js
-const audit = require('package-lock-audit').audit;
+const { audit } = require('package-lock-audit');
 
 // read package-lock.json
 
