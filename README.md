@@ -10,12 +10,13 @@ A simple audit/lint/security tool for checking `npm` `package-lock.json` files a
 * Mismatches between dependency version and `resolved` URL version
 * Mismatches between dependency package names and `resolved` URL names
 * Erroneously installed packages which match a built-in module name
+* Optionally checks for GPL-only licensed dependencies (with `--nogpl true`)
 
 It returns a non-zero exit code in the event of errors, so is suitable for use in a CI pipeline.
 
 ## Usage
 
-* `npx package-lock-audit [--verbose 1] [...package-lock.json]`
+* `npx package-lock-audit [--verbose 1] [--nogpl true] [...package-lock.json]`
 
 **Note**: it is safest to use `npx` to call this binary, and to do it **before** you do `npm i` for your project. There is no need to add it to your `devDependencies` unless you want to.
 
