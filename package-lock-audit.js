@@ -32,7 +32,7 @@ async function main() {
       process.exitCode = 1;
     }
   }
-  
+
   if ((failures.length > 1) || (failures.length && count > 1)) {
     console.warn('\nFailures:');
     for (let failure of failures) {
