@@ -9,7 +9,7 @@ const recurse = require('reftools/lib/recurse.js').recurse;
 const nlfp = util.promisify(nlf.find);
 
 // allowed installs of packages matching built-in module names
-const allowList = ['events','punycode','string_decoder'];
+const allowList = ['events','punycode','querystring','string_decoder','url'];
 
 // blocked licenses
 const lblock = ['GPL','AGPL','GPL-3.0','GPL-2.0','AGPL-2.0','AGPL-3.0'];
@@ -26,12 +26,14 @@ function audit(obj,argv) {
         dep = obj.dependencies[d];
         if (argv.verbose) console.log('  Dependency',d,dep.version);
         assert.ok((allowList.indexOf(d)>=0) || (mods.builtinModules.indexOf(d)<0),`Do not require a built-in module ${d}:${dep.version}`);
-        assert.ok(dep.integrity,`Expected an integrity string: ${d}:${dep.version}`);
+        assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${d}:${dep.version}`);
         if (argv.fix) {
           dep.resolved = dep.resolved.replace('http:','https:');
         }
-        const compare = `https://registry.npmjs.org/${d}/-/${depPackage}-${dep.version}.tgz`;
-        assert.equal(dep.resolved,compare);
+        if (!dep.bundled) {
+          const compare = `https://registry.npmjs.org/${d}/-/${depPackage}-${dep.version}.tgz`;
+          assert.equal(dep.resolved,compare);
+        }
       }
     }
   });
