@@ -24,7 +24,7 @@ function audit(obj,argv) {
       for (let d in obj.dependencies) {
         const depPackage = d.split('/').pop();
         dep = obj.dependencies[d];
-        const version = d.dep?.version||dep;
+        const version = d.dep ?  d.dep.version : dep;
         if (argv.verbose) console.log('  Dependency',d,version);
         assert.ok((allowList.indexOf(d)>=0) || (mods.builtinModules.indexOf(d)<0),`Do not require a built-in module ${d}:${dep.version}`);
         if (obj.lockfileVersion === 1) {
@@ -44,7 +44,7 @@ function audit(obj,argv) {
         const dep = obj.packages[pkg];
         const version = obj.packages[pkg].version;
         pkg = pkg.split('node_modules/').pop();
-        console.log('Module',pkg||'main');
+        if (argv.verbose) console.log('  Module',pkg||'main');
         if (pkg) {
           assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${pkg}:${version}`);
           if (!dep.bundled) {

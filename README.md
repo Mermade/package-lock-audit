@@ -40,7 +40,6 @@ catch (ex) {
 
 * Optionally allow other repository URL patterns
 * Optionally allow (specific?) `git://` protocol / GitHub dependencies - possibly only if listed in `package.json`
-* Support [`lockfileVersion` 2](https://gitlab.com/gitlab-org/gitlab/-/issues/273651)
 * Finish `--fix` feature for trivial fixes like `http://` => `https://`
 * Add tests
 
