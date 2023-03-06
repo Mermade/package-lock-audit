@@ -18,7 +18,7 @@ async function main() {
       count++;
       audit(obj,argv);
       if (argv.nogpl) {
-        const result = await checkGPL(path.dirname(argv._[i]));
+        const result = await checkGPL(path.dirname(argv._[i]),argv);
         if (result) {
           console.error('Packages are licensed GPL only:',result);
           failures.push(argv._[i]);

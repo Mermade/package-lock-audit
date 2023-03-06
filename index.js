@@ -17,23 +17,41 @@ const lblock = ['GPL','AGPL','GPL-3.0','GPL-2.0','AGPL-2.0','AGPL-3.0'];
 let dep = {};
 
 function audit(obj,argv) {
-  assert.ok(obj.lockfileVersion <= 2,'Expected lockfileVersion 1 or 2');
-  delete obj.packages; // lockfileversion 2 packages object contains objects called dependencies with a different structure
+  assert.ok(obj.lockfileVersion <= 3,'Expected lockfileVersion 1, 2 or 3');
   console.log('Checking',obj.name,obj.version);
   recurse(obj,{},function(obj,key,state){
     if (key === 'dependencies' && typeof obj[key] === 'object') {
       for (let d in obj.dependencies) {
         const depPackage = d.split('/').pop();
         dep = obj.dependencies[d];
-        if (argv.verbose) console.log('  Dependency',d,dep.version);
+        const version = d.dep?.version||dep;
+        if (argv.verbose) console.log('  Dependency',d,version);
         assert.ok((allowList.indexOf(d)>=0) || (mods.builtinModules.indexOf(d)<0),`Do not require a built-in module ${d}:${dep.version}`);
-        assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${d}:${dep.version}`);
-        if (argv.fix) {
-          dep.resolved = dep.resolved.replace('http:','https:');
+        if (obj.lockfileVersion === 1) {
+          assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${d}:${version}`);
+          if (argv.fix) {
+            dep.resolved = dep.resolved.replace('http:','https:');
+          }
+          if (!dep.bundled) {
+            const compare = `https://registry.npmjs.org/${d}/-/${depPackage}-${version}.tgz`;
+            assert.equal(dep.resolved,compare);
+          }
         }
-        if (!dep.bundled) {
-          const compare = `https://registry.npmjs.org/${d}/-/${depPackage}-${dep.version}.tgz`;
-          assert.equal(dep.resolved,compare);
+      }
+    }
+    if ((key === 'packages') && (typeof obj[key] === 'object')) {
+      for (let pkg in obj.packages) {
+        const dep = obj.packages[pkg];
+        const version = obj.packages[pkg].version;
+        pkg = pkg.split('node_modules/').pop();
+        console.log('Module',pkg||'main');
+        if (pkg) {
+          assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${pkg}:${version}`);
+          if (!dep.bundled) {
+            const pkgname = pkg.split('/').pop();
+            const compare = `https://registry.npmjs.org/${pkg}/-/${pkgname}-${version}.tgz`;
+            assert.equal(dep.resolved,compare);
+          }
         }
       }
     }
@@ -41,12 +59,13 @@ function audit(obj,argv) {
   return true;
 }
 
-async function checkGPL(dir) {
+async function checkGPL(dir,argv) {
   let result = false;
   const data = await nlfp({ directory: dir, production: true })
   for (let p of data) {
     const ls = p.licenseSources;
     if (ls.package && ls.package.sources) {
+      if (argv.verbose) console.log(ls.package,ls.package.sources);
       const s = ls.package.sources;
       let blocked;
       for (let l of s) {
