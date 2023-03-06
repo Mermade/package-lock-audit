@@ -65,7 +65,6 @@ async function checkGPL(dir,argv) {
   for (let p of data) {
     const ls = p.licenseSources;
     if (ls.package && ls.package.sources) {
-      if (argv.verbose) console.log(ls.package,ls.package.sources);
       const s = ls.package.sources;
       let blocked;
       for (let l of s) {
