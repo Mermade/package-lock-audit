@@ -9,7 +9,7 @@ const recurse = require('reftools/lib/recurse.js').recurse;
 const nlfp = util.promisify(nlf.find);
 
 // allowed installs of packages matching built-in module names
-const allowList = ['events','punycode','querystring','string_decoder','url'];
+const allowList = ['buffer','events','punycode','querystring','string_decoder','url'];
 
 // blocked licenses
 const lblock = ['GPL','AGPL','GPL-3.0','GPL-2.0','AGPL-2.0','AGPL-3.0'];
@@ -20,13 +20,13 @@ function audit(obj,argv) {
   assert.ok(obj.lockfileVersion <= 3,'Expected lockfileVersion 1, 2 or 3');
   console.log('Checking',obj.name,obj.version);
   recurse(obj,{},function(obj,key,state){
-    if (key === 'dependencies' && typeof obj[key] === 'object') {
+    if (key.toLowerCase().endsWith('dependencies') && typeof obj[key] === 'object') {
       for (let d in obj.dependencies) {
         const depPackage = d.split('/').pop();
         dep = obj.dependencies[d];
         const version = d.dep ?  d.dep.version : dep;
         if (argv.verbose) console.log('  Dependency',d,version);
-        assert.ok((allowList.indexOf(d)>=0) || (mods.builtinModules.indexOf(d)<0),`Do not require a built-in module ${d}:${dep.version}`);
+        assert.ok((allowList.indexOf(d)>=0) || (mods.builtinModules.indexOf(d)<0),`Do not require a built-in module ${d}:${dep.version||'No version'}`);
         if (obj.lockfileVersion === 1) {
           assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${d}:${version}`);
           if (argv.fix) {
