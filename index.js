@@ -9,7 +9,7 @@ const recurse = require('reftools/lib/recurse.js').recurse;
 const nlfp = util.promisify(nlf.find);
 
 // allowed installs of packages matching built-in module names
-const allowList = ['buffer','events','punycode','querystring','string_decoder','url'];
+const allowList = ['buffer','events','process','punycode','querystring','string_decoder','url'];
 
 // blocked licenses
 const lblock = ['GPL','AGPL','GPL-3.0','GPL-2.0','AGPL-2.0','AGPL-3.0'];
@@ -27,12 +27,13 @@ function audit(obj,argv) {
         const version = d.dep ?  d.dep.version : dep;
         if (argv.verbose) console.log('  Dependency',d,version);
         assert.ok((allowList.indexOf(d)>=0) || (mods.builtinModules.indexOf(d)<0),`Do not require a built-in module ${d}:${dep.version||'No version'}`);
+        const git = dep.resolved?.indexOf('git+ssh:') >= 0;
         if (obj.lockfileVersion === 1) {
           assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${d}:${version}`);
           if (argv.fix) {
             dep.resolved = dep.resolved.replace('http:','https:');
           }
-          if (!dep.bundled) {
+          if (!dep.bundled && !git) {
             const compare = `https://registry.npmjs.org/${d}/-/${depPackage}-${version}.tgz`;
             assert.equal(dep.resolved,compare);
           }
@@ -42,15 +43,16 @@ function audit(obj,argv) {
     if ((key === 'packages') && (typeof obj[key] === 'object')) {
       for (let pkg in obj.packages) {
         const dep = obj.packages[pkg];
-        const version = obj.packages[pkg].version;
+        const version = dep.version;
         pkg = pkg.split('node_modules/').pop();
         if (argv.verbose) console.log('  Module',pkg||'main');
         if (pkg) {
-          assert.ok(dep.integrity||dep.bundled,`Expected an integrity string: ${pkg}:${version}`);
+          const git = (dep.dependencies?.[pkg]||'git+ssh:').indexOf('git+ssh:') >= 0;
+          assert.ok(dep.integrity||dep.bundled||git,`Expected an integrity string: ${pkg}:${version}`);
           if (!dep.bundled) {
             const pkgname = pkg.split('/').pop();
             const compare = `https://registry.npmjs.org/${pkg}/-/${pkgname}-${version}.tgz`;
-            assert.equal(dep.resolved,compare);
+            if (!git) assert.equal(dep.resolved,compare);
           }
         }
       }
